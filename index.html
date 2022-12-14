@@ -15,18 +15,32 @@
     <!-- example of injection point where you write your app template -->
     <div id="q-app" class="fullscreen">
         <div class="row justify-center q-ma-lg">
-            <q-card style="width: 300px" class="q-px-sm q-pb-md">
+            <q-card v-if="user.code===0">
                 <q-card-section>
-                    <div class="text-h6">Login</div>
+                    <div class="text-h6">Current User</div>
                 </q-card-section>
-                <q-card-sections>
-                    <q-input outlined v-model="email" label="email"
-                        :rules="[val => (val&&val.includes('@')) || 'email is required']"></q-input>
-                </q-card-sections>
-                <q-card-actions align="right" class="text-primary">
-                    <q-btn flat label="Next" @click="onNext()"></q-btn>
-                </q-card-actions>
+                {{user.email}}:{{user.uid}}
             </q-card>
+            <div v-else>
+                <q-card style="width: 300px" class="q-px-sm q-pb-md" v-if="goNext==false">
+                    <q-card-section>
+                        <div class="text-h6">Login</div>
+                    </q-card-section>
+                    <q-card-sections>
+                        <q-input outlined v-model="email" label="email"
+                            :rules="[val => (val&&val.includes('@')) || 'email is required']"></q-input>
+                    </q-card-sections>
+                    <q-card-actions align="right" class="text-primary">
+                        <q-btn flat label="Next" @click="onNext()"></q-btn>
+                    </q-card-actions>
+                </q-card>
+                <q-card style="width: 300px" class="q-px-sm q-pb-md" v-else>
+                    <q-card-section>
+                        A login email has sent to {{email}}. Please click the link to login
+                    </q-card-section>
+                </q-card>
+            </div>
+
         </div>
 
     </div>
@@ -41,20 +55,29 @@
           Example kicking off the UI. Obviously, adapt this to your specific needs.
           Assumes you have a <div id="q-app"></div> in your <body> above
          */
-        const email = ref("")
+        const email = ref(""), goNext = ref(false)
+        const user = ref({})
         async function onNext() {
             const url = '/api/strategy/ml/request?email=' + email.value
-            const res = await fetch(url)
-            console.log(await res.json())
+            const res = (await fetch(url)).json
+            console.log(res)
+            if (res.code === 0) {
+                goNext.value = true
+            }
         }
         const app = Vue.createApp({
             setup() {
                 onMounted(async () => {
                     const res = await fetch('/api/user/info')
-                    console.log(await res.json())
+                    const r = await res.json()
+                    if (r.code === 0) {
+                        user.value = r
+                    }
                 })
                 return {
                     email,
+                    user,
+                    goNext,
                     onNext,
                 }
             }
