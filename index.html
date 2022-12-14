@@ -32,7 +32,7 @@
             setup() {
                 onMounted(async () => {
                     const res = await fetch('/api/user/info')
-                    console.log(res)
+                    console.log(await res.json())
                 })
                 return {}
             }
