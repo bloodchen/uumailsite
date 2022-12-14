@@ -24,7 +24,7 @@
                         :rules="[val => (val&&val.includes('@')) || 'email is required']"></q-input>
                 </q-card-sections>
                 <q-card-actions align="right" class="text-primary">
-                    <q-btn flat label="Next" @click="OnNext()"></q-btn>
+                    <q-btn flat label="Next" @click="onNext()"></q-btn>
                 </q-card-actions>
             </q-card>
         </div>
@@ -43,7 +43,6 @@
          */
         const email = ref("")
         async function onNext() {
-
             const url = '/api/strategy/req?email=' + email.value
             const res = await fetch(url)
             console.log(await res.json())
