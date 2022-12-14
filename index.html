@@ -13,8 +13,21 @@
 
 <body>
     <!-- example of injection point where you write your app template -->
-    <div id="q-app">
-
+    <div id="q-app" class="fullscreen">
+        <div class="row justify-center q-ma-lg">
+            <q-card style="width: 300px" class="q-px-sm q-pb-md">
+                <q-card-section>
+                    <div class="text-h6">Login</div>
+                </q-card-section>
+                <q-card-sections>
+                    <q-input outlined v-model="email" label="email"
+                        :rules="[val => (val&&val.includes('@')) || 'email is required']"></q-input>
+                </q-card-sections>
+                <q-card-actions align="right" class="text-primary">
+                    <q-btn flat label="Next" @click="OnNext()"></q-btn>
+                </q-card-actions>
+            </q-card>
+        </div>
 
     </div>
 
@@ -28,13 +41,22 @@
           Example kicking off the UI. Obviously, adapt this to your specific needs.
           Assumes you have a <div id="q-app"></div> in your <body> above
          */
+        const email = ref("")
+        async function onNext() {
+            
+            const url = '/api/strategy/req?email=' + email.value
+            const res = await fetch(url)
+            console.log(await res.json())
+        }
         const app = Vue.createApp({
             setup() {
                 onMounted(async () => {
                     const res = await fetch('/api/user/info')
                     console.log(await res.json())
                 })
-                return {}
+                return {
+                    onNext,
+                }
             }
         })
 
