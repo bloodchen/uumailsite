@@ -43,7 +43,7 @@
          */
         const email = ref("")
         async function onNext() {
-            const url = '/api/strategy/req?email=' + email.value
+            const url = '/api/strategy/ml/request?email=' + email.value
             const res = await fetch(url)
             console.log(await res.json())
         }
